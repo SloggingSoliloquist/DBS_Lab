@@ -1,0 +1,259 @@
+create table Employee(
+EmpNo number(4) primary key,
+ EmpName varchar(20) NOT NULL,
+ Gender char(1) NOT NULL,
+ Salary numeric(9,2) NOT NULL,
+ Address varchar(20) NOT NULL,
+ DNo number(4));
+
+
+alter table Employee add CONSTRAINT gender_m_or_f check(gender in('M', 'F'));
+
+
+create table Department(
+DeptNo number(4) primary key,
+DeptName varchar(20) unique);
+
+
+
+alter table Employee add constraint employee_dept_fk foreign key(DNo) references Department(DeptNo);
+
+
+
+Inserting into employees:
+insert into Employee values(2344, 'Tushar', 'M', 2348999.34, 'Manipal', 1);
+insert into Employee values(3455, 'Eshaan', 'M', 2347999.34, 'Mangalore', 4);
+insert into Employee values(3453, 'Uttam', 'M', '348999.34, 'Noida', 3);
+insert into Employee values(2324, 'Anshika', 'F', 1348999.34, 'Naasik', 2);
+insert into Employee values(2432, 'Antara', 'F', 4348999.34, 'Chandigarh', 5);
+
+
+
+insert into Department values(1, 'School of Computer Engineering');
+insert into Department values(2, 'School of Electrical Engineering');
+insert into Department values(3, 'School of Instrumentation and Control Engineering');
+insert into Department values(4, 'School of Mechanical Engineering');
+insert into Department values(5, 'School of Biomedical Engineering');
+
+
+Erroneous insertions into employee:
+insert into Employee values(1244, 'Sruto', 'T', 2348999.34, 'West Bengal', 4);
+ERROR at line 1:
+ORA-02290: check constraint (ITB64.GENDER_M_OR_F) violated
+
+
+insert into Employee values(2324, 'Zil', 'M', 2348999.34, 'West Bengal', 5);
+*
+ERROR at line 1:
+ORA-00001: unique constraint (ITB64.SYS_C0014097) violated
+
+
+insert into Employee values(2346, 'Amaan', 'M', 2348999.34, 'Mulki', 6);
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (ITB64.EMPLOYEE_DEPT_FK) violated - parent key
+not found
+
+Modify or delete tuple that violates constraint:
+delete from Department where DeptNo='5';
+*
+ERROR at line 1:
+ORA-02292: integrity constraint (ITB64.EMPLOYEE_DEPT_FK) violated - child
+record found
+
+update Department set DeptNo='3' where DeptName='School of Biomedical Engineering');
+*
+ERROR at line 1:
+ORA-00001: unique constraint (ITB64.SYS_C0014144) violated
+
+alter table Employee drop constraint employee_dept_fk;
+
+alter table Employee add constraint employee_dept_fk foreign key(DNo) references Department(DeptNo) ON DELETE CASCADE;
+
+alter table Employee add constraint check_salary check (Salary>10000);
+
+insert into Employee values(2844, 'Zil', 'M', 999.34, 'West Bengal', 5)
+*
+ERROR at line 1:
+ORA-02290: check constraint (ITB64.CHECK_SALARY) violated
+
+
+
+---------------------------------------------------------------------------------------
+
+select name, dept_name from student;
+NAME                 DEPT_NAME
+-------------------- --------------------
+Zhang                Comp. Sci.
+Shankar              Comp. Sci.
+Brandt               History
+Chavez               Finance
+Peltier              Physics
+Levy                 Physics
+Williams             Comp. Sci.
+Sanchez              Music
+Snow                 Physics
+Brown                Comp. Sci.
+Aoi                  Elec. Eng.
+
+NAME                 DEPT_NAME
+-------------------- --------------------
+Bourikas             Elec. Eng.
+Tanaka               Biology
+
+13 rows selected.
+select NAME from Instructor where DEPT_NAME='Comp. Sci.';
+
+NAME
+--------------------
+Srinivasan
+Katz
+Brandt
+select title from Course where dept_name ='Comp. Sci.' and credits=3;
+TITLE
+--------------------------------------------------
+Robotics
+Image Processing
+Database System Concepts
+select t.ID, C.COURSE_ID, C.TITLE from Takes T, Course C where t.ID='12345' and T.COURSE_ID = C.COURSE_ID;
+ID    COURSE_I TITLE
+----- -------- --------------------------------------------------
+12345 CS-101   Intro. to Computer Science
+12345 CS-190   Game Design
+12345 CS-315   Robotics
+12345 CS-347   Database System Concepts
+select name from instructor where salary between 40000 and 90000;
+NAME
+--------------------
+Srinivasan
+Wu
+Mozart
+El Said
+Gold
+Katz
+Califieri
+Singh
+Crick
+Kim
+
+10 rows selected.
+select ID from Instructor MINUS select ID from Teaches;
+ID
+-----
+33456
+58583
+76543
+ select S.name, T.course_ID,T.year from Student S, Takes T, Section Sc where Sc.room_number = 100 and Sc.course_ID=T.course_ID and T.ID = S.ID;
+NAME                 COURSE_I       YEAR
+-------------------- -------- ----------
+Peltier              PHY-101        2009
+Levy                 CS-319         2010
+Brown                CS-319         2010
+ select S.name, C.Course_ID, C.title AS C_NAME from Student S, Course C, Takes T where T.year=2010 and T.ID=S.ID and C.course_ID = T.course_ID;
+
+NAME                 COURSE_I C_NAME
+-------------------- -------- --------------------------------------------------
+Tanaka               BIO-301  Genetics
+Levy                 CS-101   Intro. to Computer Science
+Shankar              CS-315   Robotics
+Bourikas             CS-315   Robotics
+Levy                 CS-319   Image Processing
+Brown                CS-319   Image Processing
+Chavez               FIN-201  Investment Banking
+Brandt               HIS-351  World History
+Sanchez              MU-199   Music Video Production
+
+9 rows selected.
+
+select name, salary from Instructor where salary>(select min(salary) from Instructor where dept_name = 'Comp. Sci.');
+
+NAME                     SALARY
+-------------------- ----------
+Wu                        90000
+Einstein                  95000
+Gold                      87000
+Katz                      75000
+Singh                     80000
+Crick                     72000
+Brandt                    92000
+Kim                       80000
+
+8 rows selected.
+
+
+select name from Instructor where dept_name like '%Co%';
+
+NAME
+--------------------
+Srinivasan
+Katz
+Brandt
+
+
+select name, length(name) from Student;
+
+NAME                 LENGTH(NAME)
+-------------------- ------------
+Zhang                           5
+Shankar                         7
+Brandt                          6
+Chavez                          6
+Peltier                         7
+Levy                            4
+Williams                        8
+Sanchez                         7
+Snow                            4
+Brown                           5
+Aoi                             3
+
+NAME                 LENGTH(NAME)
+-------------------- ------------
+Bourikas                        8
+Tanaka                          6
+
+13 rows selected.
+
+
+ select dept_name, SUBSTR(dept_name,3,3) from Department;
+
+DEPT_NAME            SUBSTR(DEPT_
+-------------------- ------------
+Biology              olo
+Comp. Sci.           mp.
+Elec. Eng.           ec.
+Finance              nan
+History              sto
+Music                sic
+Physics              ysi
+
+7 rows selected.
+
+update Course set CREDITS=0 where CREDITS is NULL;
+
+0 rows updated.
+
+
+select salary, round(salary, 3) from instructor;
+
+    SALARY ROUND(SALARY,3)
+---------- ---------------
+     65000           65000
+     90000           90000
+     40000           40000
+     95000           95000
+     60000           60000
+     87000           87000
+     75000           75000
+     62000           62000
+     80000           80000
+     72000           72000
+     92000           92000
+
+    SALARY ROUND(SALARY,3)
+---------- ---------------
+     80000           80000
+
+12 rows selected.
+
+
+
