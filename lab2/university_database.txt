@@ -1,4 +1,4 @@
-	delete from prereq;
+delete from prereq;
 delete from time_slot;
 delete from advisor;
 delete from takes;
@@ -16,7 +16,7 @@ create table classroom
 	 primary key (building, room_number)
 	);
 
-create table department1
+create table department
 	(dept_name		varchar(20),
 	 building		varchar(15), 
 	 budget		        numeric(12,2) check (budget > 0),
