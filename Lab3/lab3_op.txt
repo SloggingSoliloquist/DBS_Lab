@@ -1,0 +1,127 @@
+select course_id from takes where semester = 'Fall' and year=2009
+UNION
+select course_id from takes where semester = 'Spring' and year =2010;
+
+COURSE_I
+--------
+CS-101
+CS-315
+CS-319
+CS-347
+FIN-201
+HIS-351
+MU-199
+PHY-101
+
+
+select course_id from takes where semester = 'Fall' and year=2009
+INTERSECT
+select course_id from takes where semester = 'Spring' and year =2010;
+
+
+COURSE_I
+--------
+CS-101
+
+
+
+select course_id from takes where semester = 'Fall' and year=2009
+MINUS
+select course_id from takes where semester = 'Spring' and year =2010;
+
+COURSE_I
+--------
+CS-347
+PHY-101
+
+
+
+select title from course where course_id=(select course_id from course
+minus
+select course_id from takes);
+
+TITLE
+--------------------------------------------------
+Computational Biology
+
+
+select course_id from course where course_id in (select course_id from takes where semester = 'Fall' and year=2009
+INTERSECT
+select course_id from Takes where semester = 'Spring' and year =2010);
+
+
+COURSE_I
+--------
+CS-101
+
+
+
+
+select count(course_id) from Takes where course_id in (select course_id from teaches where
+id=10101);
+
+COUNT(COURSE_ID)
+----------------
+              11
+
+
+select course_id from course where course_id in (select course_id from takes where semester = 'Fall' and year = 2009) and course_id not in(select course_id from takes where semester ='Spring' and year = 2010);
+
+
+COURSE_I
+--------
+CS-347
+PHY-101
+
+
+select name from student where name in (select name from student intersect select name from instructor);
+
+
+
+NAME
+--------------------
+Brandt
+
+
+select name from instructor where salary = (select min(salary) from instructor where dept_name = 'Biology');
+
+NAME
+--------------------
+Wu
+Einstein
+Gold
+Katz
+Singh
+Crick
+Brandt
+Kim
+
+select name from instructor where salary = (select max(salary) from instructor where dept_name = 'Biology');
+
+NAME
+--------------------
+Crick
+
+
+select max(sal) from (select avg(salary) sal, dept_name from instructor group by dept_name);
+
+  MAX(SAL)
+----------
+     91000
+
+
+select dept_name from department where budget<(select avg(salary) from instructor);
+
+DEPT_NAME
+--------------------
+History
+Physics
+
+
+
+
+EXISTS:
+
+
+
+
