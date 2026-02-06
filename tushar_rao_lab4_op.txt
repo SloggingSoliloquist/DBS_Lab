@@ -1,0 +1,308 @@
+select course_id, count(*) as NUM_TAKEN from takes group by course_id;
+
+COURSE_I  NUM_TAKEN
+-------- ----------
+FIN-201           1
+CS-190            2
+MU-199            1
+CS-101            7
+HIS-351           1
+CS-319            2
+CS-347            2
+PHY-101           1
+EE-181            1
+CS-315            2
+BIO-101           1
+
+COURSE_I  NUM_TAKEN
+-------- ----------
+BIO-301           1
+
+12 rows selected.
+
+
+
+
+select dept_name from course natural join takes group by dept_name having count(distinct ID)>1;
+
+DEPT_NAME
+--------------------
+Comp. Sci.
+
+
+
+DEPT_NAME            COUNT(DISTINCTCOURSE_ID)
+-------------------- ------------------------
+Comp. Sci.                                  5
+Biology                                     3
+History                                     1
+Elec. Eng.                                  1
+Finance                                     1
+Music                                       1
+Physics                                     1
+
+7 rows selected.
+
+
+
+DEPT_NAME            AVERAGE_SALARY_DEPT
+-------------------- -------------------
+Comp. Sci.                    77333.3333
+Biology                            72000
+History                            61000
+Finance                            85000
+Elec. Eng.                         80000
+Physics                            91000
+
+6 rows selected.
+
+
+
+select sec_id, count(distinct ID) from Takes natural join Section where semester = 'Spring' and year = 2009 group by sec_id;
+
+SEC_ID   COUNT(DISTINCTID)
+-------- -----------------
+2                        2
+1                        1
+
+
+
+
+ select course_id from prereq order by course_id;
+
+COURSE_I
+--------
+BIO-301
+BIO-399
+CS-190
+CS-315
+CS-319
+CS-347
+EE-181
+
+7 rows selected.
+
+
+
+ select * from Instructor order by salary desc;
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+22222 Einstein             Physics                   95000
+83821 Brandt               Comp. Sci.                92000
+12121 Wu                   Finance                   90000
+33456 Gold                 Physics                   87000
+98345 Kim                  Elec. Eng.                80000
+76543 Singh                Finance                   80000
+45565 Katz                 Comp. Sci.                75000
+76766 Crick                Biology                   72000
+10101 Srinivasan           Comp. Sci.                65000
+58583 Califieri            History                   62000
+32343 El Said              History                   60000
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+15151 Mozart               Music                     40000
+
+12 rows selected.
+
+
+
+select max(sum(salary)) from instructor group by dept_name;
+
+MAX(SUM(SALARY))
+----------------
+          232000
+
+
+
+select dept_name, avg(salary) average_salary from instructor group by dept_name having avg(salary)>42000;
+
+DEPT_NAME            AVERAGE_SALARY
+-------------------- --------------
+Comp. Sci.               77333.3333
+Biology                       72000
+History                       61000
+Finance                       85000
+Elec. Eng.                    80000
+Physics                       91000
+
+6 rows selected.
+
+
+
+
+SQL>  SELECT sec_id, semester, year, COUNT(ID) AS enrollment
+  2     FROM takes
+  3     WHERE (semester = 'Spring' AND year = 2010)
+  4     GROUP BY sec_id, semester, year
+  5     HAVING COUNT(ID) = (
+  6         SELECT MAX(cnt)
+  7         FROM (
+  8             SELECT COUNT(ID) AS cnt
+  9             FROM takes
+ 10             WHERE semester = 'Spring' AND year = 2010
+ 11             GROUP BY sec_id
+ 12        )
+ 13   );
+
+SEC_ID   SEMEST       YEAR ENROLLMENT
+-------- ------ ---------- ----------
+1        Spring       2010          7
+
+
+
+?????????????????????
+
+
+ select avg(salary), dept_name from instructor group by dept_name having avg(salary)>50000 and count(ID)>2;
+
+AVG(SALARY) DEPT_NAME
+----------- --------------------
+ 77333.3333 Comp. Sci.
+
+
+
+select dept_name from department where budget=(select max(budget) from department);
+
+DEPT_NAME
+--------------------
+Finance
+
+
+ select dept_name from instructor group by dept_name having sum(salary) > (select avg(salary) from instructor);
+
+DEPT_NAME
+--------------------
+Comp. Sci.
+History
+Finance
+Elec. Eng.
+Physics
+
+
+
+========================================
+Savepoint:
+=========================================
+
+ SAVEPOINT pls_save_me;
+
+Savepoint created.
+
+SQL> select dept_name from student;
+
+DEPT_NAME
+--------------------
+Comp. Sci.
+Comp. Sci.
+History
+Finance
+Physics
+Physics
+Comp. Sci.
+Music
+Physics
+Comp. Sci.
+Elec. Eng.
+
+DEPT_NAME
+--------------------
+Elec. Eng.
+Biology
+
+13 rows selected.
+
+SQL> select * from department;
+
+DEPT_NAME            BUILDING            BUDGET
+-------------------- --------------- ----------
+Biology              Watson               90000
+Comp. Sci.           Taylor              100000
+Elec. Eng.           Taylor               85000
+Finance              Painter             120000
+History              Painter              50000
+Music                Packard              80000
+Physics              Watson               70000
+
+7 rows selected.
+
+SQL> insert into department values('IT', 'AB5', 2);
+
+1 row created.
+
+SQL> update student set dept_name='IT' where dept_name='Comp. Sci.'
+  2  ;
+
+4 rows updated.
+
+SQL> select * from department;
+
+DEPT_NAME            BUILDING            BUDGET
+-------------------- --------------- ----------
+Biology              Watson               90000
+Comp. Sci.           Taylor              100000
+Elec. Eng.           Taylor               85000
+Finance              Painter             120000
+History              Painter              50000
+Music                Packard              80000
+Physics              Watson               70000
+IT                   AB5                      2
+
+8 rows selected.
+
+SQL> select * from student;
+
+ID    NAME                 DEPT_NAME              TOT_CRED
+----- -------------------- -------------------- ----------
+00128 Zhang                IT                          102
+12345 Shankar              IT                           32
+19991 Brandt               History                      80
+23121 Chavez               Finance                     110
+44553 Peltier              Physics                      56
+45678 Levy                 Physics                      46
+54321 Williams             IT                           54
+55739 Sanchez              Music                        38
+70557 Snow                 Physics                       0
+76543 Brown                IT                           58
+76653 Aoi                  Elec. Eng.                   60
+
+ID    NAME                 DEPT_NAME              TOT_CRED
+----- -------------------- -------------------- ----------
+98765 Bourikas             Elec. Eng.                   98
+98988 Tanaka               Biology                     120
+
+13 rows selected.
+
+
+
+===========================Q2============================
+
+
+update instructor set salary = case
+when salary>100000 then salary+salary*0.003
+else salary+salary*0.005
+end;
+
+
+SQL> select * from instructor;
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+10101 Srinivasan           Comp. Sci.                65325
+12121 Wu                   Finance                   90450
+15151 Mozart               Music                     40200
+22222 Einstein             Physics                   95475
+32343 El Said              History                   60300
+33456 Gold                 Physics                   87435
+45565 Katz                 Comp. Sci.                75375
+58583 Califieri            History                   62310
+76543 Singh                Finance                   80400
+76766 Crick                Biology                   72360
+83821 Brandt               Comp. Sci.                92460
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+98345 Kim                  Elec. Eng.                80400
+
+12 rows selected.
