@@ -1,0 +1,107 @@
+select bdate, address from employee where fname='John' and Lname='Smith' and minit='B';
+
+BDATE     ADDRESS
+--------- ------------------------------
+09-JAN-65 731 Fondren, Houston, TX
+
+
+select Fname, Lname, address from employee inner join department on employee.dno=department.dnumber where dname='Research';
+
+FNAME           LNAME           ADDRESS
+--------------- --------------- ------------------------------
+John            Smith           731 Fondren, Houston, TX
+Franklin        Wong            638 Voss, Houston, TX
+Ramesh          Narayan         975 Fire Oak, Humble, TX
+Joyce           English         5631 Rice, Houston, TX
+
+
+
+
+2. 
+ select pnumber, dnum, lname, address, bdate from project inner join department on project.dnum=department.dnumber inner join employee on project.dnum=employee.dno and department.mgr_ssn=employee.ssn where plocation='Stafford';
+
+   PNUMBER       DNUM LNAME           ADDRESS                        BDATE
+---------- ---------- --------------- ------------------------------ ---------
+        10          4 Wallace         291 Berry, Bellaire, TX        20-JUN-41
+
+
+3. select l.fname employee_fname, l.lname employee_lname, r.fname supervisor_fname, r.lname supervisor_lname from employee l left join employee r on l.super_ssn=r.ssn;
+
+EMPLOYEE_FNAME  EMPLOYEE_LNAME  SUPERVISOR_FNAM SUPERVISOR_LNAM
+--------------- --------------- --------------- ---------------
+Richard         Marini          Richard         Marini
+John            Smith           Franklin        Wong
+Ramesh          Narayan         Franklin        Wong
+Joyce           English         Franklin        Wong
+Alicia          Zelaya          Jennifer        Wallace
+Ahmad           Jabbar          Jennifer        Wallace
+Franklin        Wong            James           Borg
+Jennifer        Wallace         James           Borg
+James           Borg
+
+9 rows selected.
+
+4. select pno from works_on inner join employee on works_on.essn=employee.ssn where lname='Smith';
+
+       PNO
+----------
+         1
+         2
+
+5. 
+
+
+9. 
+
+
+10. select sum(salary), max(salary), min(salary), avg(salary) from employee;
+
+SUM(SALARY) MAX(SALARY) MIN(SALARY) AVG(SALARY)
+----------- ----------- ----------- -----------
+     318000       55000       25000  35333.333
+
+
+
+11.
+select pnumber, pname, count(essn) from project inner join works_on on project.pnumber=works_on.pno group by pnumber, pname order by pnumber;
+
+   PNUMBER PNAME           COUNT(ESSN)
+---------- --------------- -----------
+         1 ProductX                  2
+         2 ProductY                  3
+         3 ProductZ                  2
+        10 Computerization           3
+        20 Reorganization            3
+        30 Newbenefits               3
+
+6 rows selected.
+
+
+12. 
+
+SQL> select pno, pname, count(essn) from works_on inner join project on project.pnumber=works_on.pno group by pno,pname having count(pno)>1;
+
+       PNO PNAME           COUNT(ESSN)
+---------- --------------- -----------
+         2 ProductY                  3
+        30 Newbenefits               3
+        20 Reorganization            3
+         1 ProductX                  2
+        10 Computerization           3
+         3 ProductZ                  2
+
+6 rows selected.
+
+
+
+13. 
+
+select count(distinct l.ssn), l.dno from employee l inner join employee r on l.dno=r.dno where l.salary>40000 group by l.dno having count(l.ssn)>3;
+
+COUNT(DISTINCTL.SSN)        DNO
+-------------------- ----------
+                   2          4
+
+select count(ssn), dno group by dno having count(ssn)>5;
+
+
