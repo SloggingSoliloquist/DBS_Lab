@@ -1,0 +1,226 @@
+Try creating a variable that is a record of StudentTable
+
+declare rollno_marks StudentTable%ROWTYPE;
+rno StudentTable.rollno%TYPE:=1;
+begin
+select * into rollno_marks from StudentTable where rollno=rno;
+dbms_output.put_line(rollno_marks.gpa);
+END;
+/
+
+1. Display the gpa of the given student
+
+declare srecord StudentTable%ROWTYPE;
+rno StudentTable.rollno%TYPE; --make sure to give this a different name from the actual column name in the table
+begin
+select * into srecord from StudentTable where rollno=&rno;
+dbms_output.put_line(srecord.rollno||' '||srecord.gpa);
+end;
+/
+
+Enter value for rno: 4
+old   4: select * into srecord from StudentTable where rollno=&rno;
+new   4: select * into srecord from StudentTable where rollno=4;
+4 8
+
+PL/SQL procedure successfully completed.
+
+2. Display the letter grade of a given student:
+
+DECLARE rno StudentTable.rollno%TYPE;
+grade_point StudentTable.gpa%TYPE;
+begin
+select gpa into grade_point from StudentTable where rollno=&rno;
+if grade_point>=9 THEN
+dbms_output.put_line('A+');
+elsif grade_point>=8 THEN
+dbms_output.put_line('A');
+elsif grade_point>=7 THEN
+dbms_output.put_line('B');
+elsif grade_point>=6 THEN
+dbms_output.put_line('C');
+elsif grade_point>=5 THEN
+dbms_output.put_line('D');
+elsif grade_point>=4 THEN
+dbms_output.put_line('E');
+else
+dbms_output.put_line('F');
+end if;
+end;
+/
+
+Enter value for rno: 2
+old   4: select gpa into grade_point from StudentTable where rollno=&rno;
+new   4: select gpa into grade_point from StudentTable where rollno=2;
+C
+
+PL/SQL procedure successfully completed.
+
+
+3. Calculate fine for book return
+
+declare borrow_date varchar2(10);
+return_date varchar2(10);
+borrow_period int;
+d_between int;
+fine int;
+late_period int;
+begin
+borrow_date:='&borrow_date';
+return_date:='&return_date';
+borrow_period:=&borrow_period;
+select to_date(return_date, 'DD-MM-YYYY')-to_date(borrow_date, 'DD-MM-YYYY') into d_between from dual;
+late_period:=d_between-borrow_period;
+if late_period<=7 THEN
+fine:=0;
+elsif late_period<=15 THEN
+fine:=late_period;
+elsif late_period<=30 THEN
+fine:=2*late_period;
+else 
+fine:=5*late_period;
+end if;
+dbms_output.put_line('FINE:'||fine);
+end;
+/
+
+Enter value for borrow_date: 26-12-2005
+old   8: borrow_date:='&borrow_date';
+new   8: borrow_date:='26-12-2005';
+Enter value for return_date: 15-01-2006
+old   9: return_date:='&return_date';
+new   9: return_date:='15-01-2006';
+Enter value for borrow_period: 5
+old  10: borrow_period:=&borrow_period;
+new  10: borrow_period:=5;
+20
+15
+
+4. 
+
+declare rno StudentTable.rollno%TYPE;
+grade_point StudentTable.gpa%TYPE;
+begin
+for i in 1..5 LOOP
+select gpa into grade_point from StudentTable where rollno=i;
+dbms_output.put_line(grade_point);
+END LOOP;
+end;
+/
+
+6.8
+6.5
+7.5
+8
+9
+
+PL/SQL procedure successfully completed.
+
+5. 
+declare grade varchar2(2);
+grade_point StudentTable.gpa%TYPE;
+max_rno int;
+i int;
+begin
+i:=1;
+select max(rollno) into max_rno from StudentTable;
+WHILE i<=max_rno
+LOOP
+select gpa into grade_point from StudentTable where rollno=i;
+if grade_point>=9 THEN
+grade:='A+';
+elsif grade_point>=8 THEN
+grade:='A';
+elsif grade_point>=7 THEN
+grade:='B';
+elsif grade_point>=6 THEN
+grade:='C';
+elsif grade_point>=5 THEN
+grade:='D';
+elsif grade_point>=4 THEN
+grade:='E';
+else
+grade:='F';
+end if;
+update studenttable set lettergrade=grade where rollno=i;
+i:=i+1;
+END LOOP;
+END;
+/
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT * FROM STUDENTTABLE;
+
+    ROLLNO        GPA LE
+---------- ---------- --
+         1        6.8 C
+         2        6.5 C
+         4          8 A
+         5          9 A+
+         3        7.5 B
+6. 
+declare grade_point StudentTable.gpa%TYPE;
+topper StudentTable.rollno%TYPE;
+max_gpa StudentTable.gpa%TYPE;
+begin
+max_gpa:=0;
+for i in 1..5 LOOP
+select gpa into grade_point from StudentTable where rollno=i;
+if grade_point>max_gpa THEN
+max_gpa:=grade_point;
+topper:=i;
+END IF;
+END LOOP;
+dbms_output.put_line(topper);
+end;
+/
+
+5
+
+7. Print letter grade of students using GOTO
+
+declare grade_point StudentTable.gpa%TYPE;
+rno StudentTable.rollno%TYPE;
+grade varchar2(2);
+i int:=1;
+begin
+LOOP
+select gpa into grade_point from StudentTable where rollno=i;
+if grade_point>=9 THEN
+grade:='A+';
+elsif grade_point>=8 THEN
+grade:='A';
+elsif grade_point>=7 THEN
+grade:='B';
+elsif grade_point>=6 THEN
+grade:='C';
+elsif grade_point>=5 THEN
+grade:='D';
+elsif grade_point>=4 THEN
+grade:='E';
+else
+grade:='F';
+end if;
+dbms_output.put_line(grade);
+i:=i+1;
+if i>5 THEN
+goto TERMINATE;
+end if;
+END LOOP;
+<<TERMINATE>>
+dbms_output.put_line('Terminated');
+end;
+/
+
+C
+C
+B
+A
+A+
+Terminated
+
+8. 
+
+
+
